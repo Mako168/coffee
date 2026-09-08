@@ -19,7 +19,7 @@ const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 // ==================== PERSISTENCE ====================
 // Orders are stored in-memory (Map) AND mirrored to a JSON file on disk,
 // so they survive bot restarts / crashes.
-const DATA_FILE = path.join(__dirname, 'package.json');
+const DATA_FILE = path.join(__dirname, 'orders.json');
 
 const orders = new Map();
 
