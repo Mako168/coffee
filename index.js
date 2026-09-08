@@ -19,7 +19,7 @@ const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 const orders = new Map();
 
 console.log('╔════════════════════════════════════════╗');
-console.log('║    🤖 Bandjencafe Bot Started         ║');
+console.log('║    🤖 B AND JEN        ║');
 console.log('╠════════════════════════════════════════╣');
 console.log('║ ✅ Bot Token: Configured              ║');
 console.log('║ 📱 Mini App: Connected                ║');
@@ -34,7 +34,7 @@ bot.onText(/\/start/, (msg) => {
     const welcomeMessage = `
 ☕ Welcome ${userName}!
 
-Welcome to **Bandjencafe** Mini App!
+Welcome to **B AND JEN** COFFEE!
 
 Click the button below to:
 🛒 Browse our coffee menu
@@ -73,6 +73,7 @@ bot.on('web_app_data', (msg) => {
         orderData.userId = userId;
         orderData.userName = userName;
         orderData.receivedAt = new Date().toISOString();
+        orderData.status = 'Pending';
         
         // Store order
         orders.set(orderData.orderId, orderData);
@@ -158,6 +159,11 @@ Tax: $${orderData.tax.toFixed(2)}
 bot.on('callback_query', (query) => {
     const data = query.data;
     const adminChatId = query.message.chat.id;
+
+    if (String(adminChatId) !== String(ADMIN_CHAT_ID)) {
+        bot.answerCallbackQuery(query.id, '❌ You are not authorized.', true);
+        return;
+    }
     
     if (data.startsWith('accept_')) {
         const orderId = data.replace('accept_', '');
@@ -260,7 +266,7 @@ bot.onText(/\/help/, (msg) => {
     const chatId = msg.chat.id;
     
     const helpMessage = `
-ℹ️ *BANDJENCAFE BOT - HELP*
+ℹ️ *B AND JEN - HELP*
 
 *Available Commands:*
 /start - Start ordering
