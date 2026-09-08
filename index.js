@@ -2,12 +2,12 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 
 // Configuration
-const BOT_TOKEN = process.env.BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
-const MINI_APP_URL = process.env.MINI_APP_URL || 'https://your-vercel-url.vercel.app/ecommerce.html';
-const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || 'YOUR_ADMIN_CHAT_ID';
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const MINI_APP_URL = process.env.MINI_APP_URL || 'https://coffee-b29c-ofn1pla3b-somakos-projects.vercel.app/';
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 
 // Check if token is set
-if (BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') {
+if (!BOT_TOKEN) {
     console.error('❌ ERROR: BOT_TOKEN not set! Update .env file or environment variables');
     process.exit(1);
 }
@@ -107,7 +107,7 @@ Tax: $${orderData.tax.toFixed(2)}
         });
         
         // ====== SEND ORDER NOTIFICATION TO ADMIN ======
-        if (ADMIN_CHAT_ID && ADMIN_CHAT_ID !== 'YOUR_ADMIN_CHAT_ID') {
+        if (ADMIN_CHAT_ID) {
             const adminNotification = `
 🔔 *NEW ORDER RECEIVED*
 
