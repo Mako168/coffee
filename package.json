@@ -1,0 +1,30 @@
+{
+  "name": "bandjencafe-bot",
+  "version": "1.0.0",
+  "description": "Bandjencafe Telegram Mini App with Order Management",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "stop": "pkill -f 'node index.js'"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "coffee",
+    "mini-app",
+    "ecommerce"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.64.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
