@@ -85,7 +85,7 @@ Enjoy delicious coffee! ☕
             inline_keyboard: [[
                 {
                     text: '☕ Order Now',
-                    web_app: { url: MINI_APP_URL }
+                    web_app: { url: https://coffee-bandjen.vercel.app/ }
                 }
             ]]
         }
