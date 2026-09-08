@@ -3,7 +3,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 // Configuration
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const MINI_APP_URL = process.env.MINI_APP_URL || 'https://coffee-b29c-ofn1pla3b-somakos-projects.vercel.app/';
+const MINI_APP_URL = process.env.MINI_APP_URL || 'https://coffee-bandjen.vercel.app/';
 const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 
 // Check if token is set
@@ -262,6 +262,12 @@ Would you like to:
 }
 
 // ==================== HELP COMMAND ====================
+bot.onText(/\/myid/, (msg) => {
+    bot.sendMessage(msg.chat.id, `Your Telegram chat ID is: \`${msg.chat.id}\``, {
+        parse_mode: 'Markdown'
+    });
+});
+
 bot.onText(/\/help/, (msg) => {
     const chatId = msg.chat.id;
     
@@ -399,6 +405,54 @@ Pending: ${Array.from(orders.values()).filter(o => o.status === 'Pending').lengt
     `;
     
     bot.sendMessage(chatId, adminMessage, { parse_mode: 'Markdown' });
+});
+
+// ==================== PENDING ORDERS COMMAND ====================
+bot.onText(/\/pending/, (msg) => {
+    const chatId = msg.chat.id;
+
+    if (String(chatId) !== String(ADMIN_CHAT_ID)) {
+        bot.sendMessage(chatId, '❌ Not authorized.');
+        return;
+    }
+
+    const pendingOrders = Array.from(orders.values()).filter(order => order.status === 'Pending');
+
+    if (pendingOrders.length === 0) {
+        bot.sendMessage(chatId, '✅ There are no pending orders.');
+        return;
+    }
+
+    pendingOrders.forEach(order => {
+        const details = `
+🔔 *PENDING ORDER*
+
+Order ID: \`${order.orderId}\`
+👤 Customer: ${order.userName}
+📞 Chat ID: ${order.chatId}
+🕐 Time: ${new Date(order.receivedAt).toLocaleString()}
+
+☕ *Items:*
+${order.items.map((item, index) =>
+    `${index + 1}. ${item.name} (${item.size}) x${item.quantity} - $${item.subtotal.toFixed(2)}`
+).join('\n')}
+
+Subtotal: $${order.subtotal.toFixed(2)}
+Delivery: $${order.delivery.toFixed(2)}
+Tax: $${order.tax.toFixed(2)}
+*TOTAL: $${order.total.toFixed(2)}*
+        `;
+
+        bot.sendMessage(chatId, details, {
+            parse_mode: 'Markdown',
+            reply_markup: {
+                inline_keyboard: [[
+                    { text: '✅ Accept Order', callback_data: `accept_${order.orderId}` },
+                    { text: '❌ Reject Order', callback_data: `reject_${order.orderId}` }
+                ]]
+            }
+        });
+    });
 });
 
 // ==================== STATS COMMAND ====================
