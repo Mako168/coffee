@@ -11,7 +11,6 @@ const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 // Check if token is set
 if (!BOT_TOKEN) {
     console.error('❌ ERROR: BOT_TOKEN not set! Update .env file or environment variables');
-    process.exit(1);
 }
 
 // Initialize bot
@@ -61,6 +60,21 @@ console.log('║ 📱 Mini App: Connected                ║');
 console.log('║ ⏳ Waiting for orders...              ║');
 console.log('╚════════════════════════════════════════╝');
 
+// ==================== SHARED KEYBOARD ====================
+// IMPORTANT: Telegram's WebApp.sendData() (used by the mini app to send
+// the finished order back to this bot as a "web_app_data" message) only
+// fires when the Mini App was opened via a Keyboard (reply) button.
+// It is silently ignored when opened via an inline_keyboard button.
+// So every "Order Now" button below uses a persistent reply keyboard,
+// not an inline button.
+const orderKeyboard = {
+    keyboard: [[
+        { text: '☕ Order Now', web_app: { url: MINI_APP_URL } }
+    ]],
+    resize_keyboard: true,
+    is_persistent: true
+};
+
 // ==================== START COMMAND ====================
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
@@ -82,14 +96,7 @@ Enjoy delicious coffee! ☕
 
     bot.sendMessage(chatId, welcomeMessage, {
         parse_mode: 'Markdown',
-        reply_markup: {
-            inline_keyboard: [[
-                {
-                    text: '☕ Order Now',
-                    web_app: { url: https://coffee-bandjen.vercel.app/ }
-                }
-            ]]
-        }
+            reply_markup: orderKeyboard
     });
 });
 
@@ -182,8 +189,6 @@ Tax: $${orderData.tax.toFixed(2)}
                         ]
                     ]
                 }
-            }).catch(error => {
-                console.error(`❌ Failed to notify admin ${ADMIN_CHAT_ID}:`, error.message);
             });
         }
 
@@ -288,14 +293,7 @@ Would you like to:
 
     bot.sendMessage(order.chatId, customerMessage, {
         parse_mode: 'Markdown',
-        reply_markup: {
-            inline_keyboard: [[
-                {
-                    text: '☕ Place New Order',
-                    web_app: { url: MINI_APP_URL }
-                }
-            ]]
-        }
+        reply_markup: orderKeyboard
     });
 
     console.log(`❌ Order rejected: ${orderId}`);
@@ -370,14 +368,7 @@ _Click the button below to order!_
 
     bot.sendMessage(chatId, menuMessage, {
         parse_mode: 'Markdown',
-        reply_markup: {
-            inline_keyboard: [[
-                {
-                    text: '🛒 Order Now',
-                    web_app: { url: MINI_APP_URL }
-                }
-            ]]
-        }
+        reply_markup: orderKeyboard
     });
 });
 
@@ -391,14 +382,7 @@ bot.onText(/\/orders/, (msg) => {
 
     if (userOrders.length === 0) {
         bot.sendMessage(chatId, '📋 You have no orders yet. Start ordering now! ☕', {
-            reply_markup: {
-                inline_keyboard: [[
-                    {
-                        text: '☕ Order Now',
-                        web_app: { url: MINI_APP_URL }
-                    }
-                ]]
-            }
+            reply_markup: orderKeyboard
         });
         return;
     }
