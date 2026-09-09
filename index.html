@@ -1028,6 +1028,11 @@
                 tg.showAlert('Your cart is empty!');
                 return;
             }
+
+            if (!tg.initData) {
+                tg.showAlert('Please open this app from the B AND JEN Telegram chat using Order Now.');
+                return;
+            }
             
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const delivery = 2.00;
@@ -1057,7 +1062,7 @@
             orders.unshift(orderData);
             localStorage.setItem('orders', JSON.stringify(orders));
             
-            // Send to bot
+            // Telegram delivers this event to the bot only when the app was opened from its chat.
             tg.sendData(JSON.stringify(orderData));
             
             // Clear cart
@@ -1065,7 +1070,7 @@
             updateCartDisplay();
             renderOrders();
             
-            tg.showAlert('✅ Order placed successfully!');
+            tg.showAlert('✅ Order sent! The shop will confirm it shortly.');
             switchTab('orders');
         }
         

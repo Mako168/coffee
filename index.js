@@ -11,6 +11,7 @@ const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 // Check if token is set
 if (!BOT_TOKEN) {
     console.error('❌ ERROR: BOT_TOKEN not set! Update .env file or environment variables');
+    process.exit(1);
 }
 
 // Initialize bot
@@ -33,10 +34,10 @@ function loadOrders() {
             });
             console.log(`📂 Loaded ${orders.size} order(s) from ${DATA_FILE}`);
         } else {
-            console.log('📂 No existing package.json found, starting fresh');
+            console.log('📂 No existing orders.json found, starting fresh');
         }
     } catch (err) {
-        console.error('⚠️  Failed to load package.json:', err.message);
+        console.error('⚠️  Failed to load orders.json:', err.message);
     }
 }
 
@@ -45,7 +46,7 @@ function saveOrders() {
         const obj = Object.fromEntries(orders);
         fs.writeFileSync(DATA_FILE, JSON.stringify(obj, null, 2), 'utf8');
     } catch (err) {
-        console.error('⚠️  Failed to save package.json:', err.message);
+        console.error('⚠️  Failed to save orders.json:', err.message);
     }
 }
 
@@ -181,6 +182,8 @@ Tax: $${orderData.tax.toFixed(2)}
                         ]
                     ]
                 }
+            }).catch(error => {
+                console.error(`❌ Failed to notify admin ${ADMIN_CHAT_ID}:`, error.message);
             });
         }
 
@@ -320,8 +323,10 @@ bot.onText(/\/help/, (msg) => {
 *How to Order:*
 1️⃣ Click the Menu Button (☕ Order Now)
 2️⃣ Browse our coffee menu
-3️⃣ Select your coffee and add it to the cart
-4️⃣ Review your order, checkout, and wait for confirmation ✅
+3️⃣ Select size and quantity
+4️⃣ Add items to cart
+5️⃣ Review and checkout
+6️⃣ Order confirmed! ✅
 
 *Order Status:*
 📍 PENDING - Waiting for confirmation
