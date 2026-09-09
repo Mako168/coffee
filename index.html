@@ -843,9 +843,23 @@
         // Cart
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+        function applyStatusFromTelegram() {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            const status = params.get('status');
+            if (!orderId || !['Accepted', 'Rejected'].includes(status)) return;
+
+            const order = orders.find(item => item.orderId === orderId);
+            if (!order) return;
+
+            order.status = status;
+            localStorage.setItem('orders', JSON.stringify(orders));
+        }
         
         // Initialize
         function init() {
+            applyStatusFromTelegram();
             renderPopularProducts();
             renderCategories();
             updateCartDisplay();

@@ -75,6 +75,15 @@ const orderKeyboard = {
     is_persistent: true
 };
 
+function statusKeyboard(orderId, status) {
+    return {
+        inline_keyboard: [[{
+            text: '📦 View Updated Order',
+            web_app: { url: `${MINI_APP_URL}?orderId=${encodeURIComponent(orderId)}&status=${status}` }
+        }]]
+    };
+}
+
 // ==================== START COMMAND ====================
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
@@ -96,7 +105,7 @@ Enjoy delicious coffee! ☕
 
     bot.sendMessage(chatId, welcomeMessage, {
         parse_mode: 'Markdown',
-            reply_markup: orderKeyboard
+        reply_markup: orderKeyboard
     });
 });
 
@@ -251,7 +260,10 @@ Your order is being prepared!
 We'll notify you when it's ready for delivery.
     `;
 
-    bot.sendMessage(order.chatId, customerMessage, { parse_mode: 'Markdown' });
+    bot.sendMessage(order.chatId, customerMessage, {
+        parse_mode: 'Markdown',
+        reply_markup: statusKeyboard(orderId, 'Accepted')
+    });
 
     console.log(`✅ Order accepted: ${orderId}`);
 }
@@ -293,7 +305,7 @@ Would you like to:
 
     bot.sendMessage(order.chatId, customerMessage, {
         parse_mode: 'Markdown',
-        reply_markup: orderKeyboard
+        reply_markup: statusKeyboard(orderId, 'Rejected')
     });
 
     console.log(`❌ Order rejected: ${orderId}`);
